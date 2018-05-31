@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Archetype
+Comment=Create new Vala apps with ease
+Icon=com.github.kjlaw89.archetype
+Exec=com.github.kjlaw89.archetype
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=GNOME;GTK;IDE;Utility;TextEditor;WebDevelopment;
+Keywords=app;template;vala;

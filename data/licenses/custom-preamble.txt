@@ -1,0 +1,3 @@
+Copyright (C) {year}  {author} <{author_email}>
+
+This Source Code Form is subject to the terms located in the LICENSE.

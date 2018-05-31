@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+
+    <gresource prefix="/com/github/kjlaw89/archetype/css">
+        <file alias="style.css" compressed="true">css/style.css</file>
+    </gresource>
+
+    <gresource prefix="/com/github/kjlaw89/archetype/images">
+        <file alias="com.github.kjlaw89.archetype.svg" compressed="true" preprocess="xml-stripblanks">images/com.github.kjlaw89.archetype.svg</file>
+        <file alias="16-com.github.kjlaw89.archetype.svg" compressed="true" preprocess="xml-stripblanks">images/icons/16/com.github.kjlaw89.archetype.svg</file>
+        <file alias="24-com.github.kjlaw89.archetype.svg" compressed="true" preprocess="xml-stripblanks">images/icons/24/com.github.kjlaw89.archetype.svg</file>
+        <file alias="32-com.github.kjlaw89.archetype.svg" compressed="true" preprocess="xml-stripblanks">images/icons/32/com.github.kjlaw89.archetype.svg</file>
+        <file alias="48-com.github.kjlaw89.archetype.svg" compressed="true" preprocess="xml-stripblanks">images/icons/48/com.github.kjlaw89.archetype.svg</file>
+        <file alias="64-com.github.kjlaw89.archetype.svg" compressed="true" preprocess="xml-stripblanks">images/icons/64/com.github.kjlaw89.archetype.svg</file>
+        <file alias="128-com.github.kjlaw89.archetype.svg" compressed="true" preprocess="xml-stripblanks">images/icons/128/com.github.kjlaw89.archetype.svg</file>
+    </gresource>
+  
+    <gresource prefix="/com/github/kjlaw89/archetype/licenses">
+        <file alias="com.github.kjlaw89.archetype.agpl-3.0" compressed="true">licenses/agpl-3.0.txt</file>
+        <file alias="com.github.kjlaw89.archetype.agpl-3.0-preamble" compressed="true">licenses/agpl-3.0-preamble.txt</file>
+        <file alias="com.github.kjlaw89.archetype.apache-2.0" compressed="true">licenses/apache-2.0.txt</file>
+        <file alias="com.github.kjlaw89.archetype.apache-2.0-preamble" compressed="true">licenses/apache-2.0-preamble.txt</file>
+        <file alias="com.github.kjlaw89.archetype.gpl-3.0" compressed="true">licenses/gpl-3.0.txt</file>
+        <file alias="com.github.kjlaw89.archetype.gpl-3.0-preamble" compressed="true">licenses/gpl-3.0-preamble.txt</file>
+        <file alias="com.github.kjlaw89.archetype.lgpl-3.0" compressed="true">licenses/lgpl-3.0.txt</file>
+        <file alias="com.github.kjlaw89.archetype.lgpl-3.0-preamble" compressed="true">licenses/lgpl-3.0-preamble.txt</file>
+        <file alias="com.github.kjlaw89.archetype.mit" compressed="true">licenses/mit.txt</file>
+        <file alias="com.github.kjlaw89.archetype.mit-preamble" compressed="true">licenses/mit-preamble.txt</file>
+        <file alias="com.github.kjlaw89.archetype.unlicense" compressed="true">licenses/unlicense.txt</file>
+        <file alias="com.github.kjlaw89.archetype.unlicense-preamble" compressed="true">licenses/unlicense-preamble.txt</file>
+        <file alias="com.github.kjlaw89.archetype.custom" compressed="true">licenses/custom.txt</file>
+        <file alias="com.github.kjlaw89.archetype.custom-preamble" compressed="true">licenses/custom-preamble.txt</file>
+    </gresource>
+</gresources>

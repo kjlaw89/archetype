@@ -1,0 +1,7 @@
+build/*
+debian/build/*
+debian/com.github.kjlaw89.archetype.debhelper.log
+debian/com.github.kjlaw89.archetype.substvars
+debian/com.github.kjlaw89.archetype/
+debian/debhelper-build-stamp
+debian/files
