@@ -31,14 +31,14 @@ namespace App.Views {
         private Gtk.Label           author_email_label;
         private Gtk.Label           branding_label;
         private Gtk.Label           dark_mode_label;
+        private Gtk.Label           description_label;
         private Gtk.Label           directory_label;
         private Gtk.Label           domain_label;
         private Gtk.Label           exec_label;
         private Gtk.Label           git_label;
         private Gtk.Label           license_label;
         private Gtk.Label           libraries_label;
-        private Gtk.Label           long_desc_label;           
-        private Gtk.Label           short_desc_label;
+        private Gtk.Label           punchline_label;
         private Gtk.Label           template_label;
         private Gtk.Label           title_label;
         
@@ -62,8 +62,8 @@ namespace App.Views {
         public Gtk.ListBox         libraries_listbox            { get; private set; }
         public Gtk.Popover         libraries_popover            { get; private set; }
         public Gtk.Label           libraries_values_label       { get; private set; }
-        public Gtk.TextView        long_desc_textview           { get; private set; }
-        public Gtk.Entry           short_desc_entry             { get; private set; }
+        public Gtk.TextView        description_textview           { get; private set; }
+        public Gtk.Entry           punchline_entry             { get; private set; }
         public Gtk.Stack           stack_view                   { get; private set; }
         public Gtk.ComboBoxText    template_combo               { get; private set; }
         public Gtk.Entry           title_entry                  { get; private set; }
@@ -211,7 +211,7 @@ namespace App.Views {
                     libraries_list ();
                     break;
                 case "development":
-                    // generate!
+                    this.generate ();
                     break;
             }
 
@@ -232,8 +232,8 @@ namespace App.Views {
                         valid = false;
                     }
 
-                    var rdnn_regex = new Regex ("^[a-z]{2,4}\\.[a-zA-Z0-9\\-_]{1,30}\\.[a-zA-Z0-9\\-_]{1,60}$");
-                    if (domain_entry.text == "" || !rdnn_regex.match (domain_entry.text)) {
+                    var rdnn_regex = new Regex ("^[a-z]{2,6}\\.[a-zA-Z0-9\\-_]{1,30}\\.([a-zA-Z0-9\\-_]{1,30}\\.?)+$");
+                    if (domain_entry.text == "" || !rdnn_regex.match (executable_label.label)) {
                         valid = false;
                     }
 
@@ -273,17 +273,13 @@ namespace App.Views {
                 valid = false;
             }
 
-            var rdnn_regex = new Regex ("^[a-z]{2,4}\\.[a-zA-Z0-9\\-_]{1,30}\\.[a-zA-Z0-9\\-_]{1,60}$");
+            var rdnn_regex = new Regex ("^[a-z]{2,6}\\.([a-zA-Z0-9\\-_]{1,30}\\.?)+$");
             if (domain_entry.text == "" || !rdnn_regex.match (domain_entry.text)) {
                 valid = false;
             }
 
-            if (valid) {
-                executable_label.label = domain_entry.text +"."+ exec_entry.text;
-                return executable_label.label;
-            }
-
-            return "";
+            executable_label.label = valid ? domain_entry.text +"."+ exec_entry.text : "";
+            return executable_label.label;
         }
 
         public string dir_path () {
@@ -516,34 +512,34 @@ namespace App.Views {
             
 
             // Short description entry
-            short_desc_entry = new Gtk.Entry ();
-            short_desc_entry.hexpand = true;
-            short_desc_entry.placeholder_text = "A short punchline";
-            short_desc_entry.key_release_event.connect ((key) => {
+            punchline_entry = new Gtk.Entry ();
+            punchline_entry.hexpand = true;
+            punchline_entry.placeholder_text = "A short punchline";
+            punchline_entry.key_release_event.connect ((key) => {
                 validate_next ();
                 return false;
             });
 
-            short_desc_label = new Gtk.Label.with_mnemonic (_("_Punchline") + ":");
-            short_desc_label.halign = Gtk.Align.END;
-            short_desc_label.mnemonic_widget = short_desc_entry;
+            punchline_label = new Gtk.Label.with_mnemonic (_("_Punchline") + ":");
+            punchline_label.halign = Gtk.Align.END;
+            punchline_label.mnemonic_widget = punchline_entry;
 
-            grid.attach (short_desc_label, 0, 2, 1, 1);
-            grid.attach (short_desc_entry, 1, 2, 3, 1);
+            grid.attach (punchline_label, 0, 2, 1, 1);
+            grid.attach (punchline_entry, 1, 2, 3, 1);
 
             // Long description entry
-            long_desc_textview = new Gtk.TextView ();
-            long_desc_textview.hexpand = true;
-            long_desc_textview.margin = 4;
-            long_desc_textview.key_release_event.connect ((key) => {
+            description_textview = new Gtk.TextView ();
+            description_textview.hexpand = true;
+            description_textview.margin = 4;
+            description_textview.key_release_event.connect ((key) => {
                 validate_next ();
                 return false;
             });
 
-            long_desc_label = new Gtk.Label.with_mnemonic (_("De_scription") + ":");
-            long_desc_label.valign = Gtk.Align.START;
-            long_desc_label.halign = Gtk.Align.END;
-            long_desc_label.mnemonic_widget = long_desc_textview;
+            description_label = new Gtk.Label.with_mnemonic (_("De_scription") + ":");
+            description_label.valign = Gtk.Align.START;
+            description_label.halign = Gtk.Align.END;
+            description_label.mnemonic_widget = description_textview;
 
             var desc_frame = new Gtk.Frame (null);
             desc_frame.height_request = 60;
@@ -551,9 +547,9 @@ namespace App.Views {
             var desc_scroll = new Gtk.ScrolledWindow (null, null);
 
             desc_frame.add (desc_scroll);
-            desc_scroll.add (long_desc_textview);
+            desc_scroll.add (description_textview);
 
-            grid.attach (long_desc_label, 0, 3, 1, 1);
+            grid.attach (description_label, 0, 3, 1, 1);
             grid.attach (desc_frame, 1, 3, 3, 1);
 
             this.stack_view.add_named (grid, "author");

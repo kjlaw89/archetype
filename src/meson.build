@@ -3,6 +3,8 @@ sources += files(
     'configs/Settings.vala',
     
     'controllers/AppController.vala',
+
+    'models/Template.vala',
     
     'views/AppView.vala',
 

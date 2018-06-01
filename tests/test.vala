@@ -83,15 +83,23 @@ namespace App.Tests {
                 view.validate_next ();
                 Assert.false (view.next_button.sensitive);
 
-                view.domain_entry.text = "com.github";          // Bad RDNN
+                view.domain_entry.text = "com.github+";          // Bad RDNN
+                view.domain_entry.changed ();
                 view.validate_next ();
                 Assert.false (view.next_button.sensitive);
 
                 view.domain_entry.text = "com.github.test";     // Good RDNN
+                view.domain_entry.changed ();
                 view.validate_next ();
                 Assert.true (view.next_button.sensitive);
 
+                view.domain_entry.text = "m.github.test";       // Bad RDNN
+                view.domain_entry.changed ();
+                view.validate_next ();
+                Assert.false (view.next_button.sensitive);
+
                 view.exec_entry.text = "test=";                 // Bad executable name
+                view.domain_entry.changed ();
                 view.validate_next ();
                 Assert.false (view.next_button.sensitive);
             });
@@ -139,6 +147,51 @@ namespace App.Tests {
                 view.toggle_library ("libgranite-dev", false);
                 Assert.string_compare ("libgtk-3-dev, libunity-dev", view.libraries_list ());
             });
+
+            Test.add_data_func ("/template/setup", () => {
+                var view = new App.Views.AppView ();
+
+                view.template_combo.active_id = "blank";
+                view.license_combo.active_id = "mit";
+                view.title_entry.text = "Test";
+                view.exec_entry.text = "test";
+                view.domain_entry.text = "com.github";
+                view.domain_entry.changed ();
+                view.author_entry.text = "Test Person";
+                view.author_email_entry.text = "test@test.com";
+                view.punchline_entry.text = "Punch!";
+                view.dark_mode_switch.active = true;
+                view.directory_button.set_uri ("file:///tmp/");
+
+                var template = new App.Models.Template (view);
+                Assert.string_compare ("blank", template.template);
+                Assert.string_compare ("mit", template.license);
+                Assert.string_compare ("Test", template.title);
+                Assert.string_compare ("test", template.executable);
+                Assert.string_compare ("com.github.test", template.rdnn);
+                Assert.string_compare ("/com/github/test/", template.rdnn_path);
+                Assert.string_compare ("Test Person", template.author);
+                Assert.string_compare ("test@test.com", template.author_email);
+                Assert.string_compare ("Punch!", template.punchline);
+                Assert.true (template.dark_mode);
+                Assert.string_compare ("file:///tmp", template.directory);
+            });
+
+            Test.add_data_func ("/template/create_and_clean", () => {
+                var view = new App.Views.AppView ();
+                var template = new App.Models.Template (view);
+                var name = "com.test.app";
+
+                // Reset to a good state by deleting any existing files
+                template.clean (name);
+
+                Assert.true (template.generate_folder (name));
+
+                // Test that our file was extract (see if README.md exists)
+                var readme_file = File.new_for_path ("/tmp/"+ name +"/README.md");
+                Assert.true (readme_file.query_exists ());
+                Assert.true (template.clean (name));
+            });            
         }
 
         public void run () {

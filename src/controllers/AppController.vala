@@ -14,8 +14,9 @@
 * with this program. If not, see http://www.gnu.org/licenses/.
 */
 
-using App.Widgets;
+using App.Models;
 using App.Views;
+using App.Widgets;
 
 namespace App.Controllers {
 
@@ -45,6 +46,10 @@ namespace App.Controllers {
             this.window.set_size_request (800, 350);
             this.window.set_titlebar (this.headerbar);
             this.application.add_window (window);
+
+            this.app_view.generate.connect (() => {
+                this.generate ();
+            });
         }
 
         public void activate () {
@@ -54,6 +59,11 @@ namespace App.Controllers {
 
         public void quit () {
             window.destroy ();
+        }
+
+        private void generate () {
+            var template = new Template (this.app_view);
+            template.generate ();
         }
     }
 }
