@@ -33,4 +33,5 @@ script:
   - houston ci
     --name-domain com.github.kjlaw89.archetype
     --distribution $DIST
-    --com.github.kjlaw89.archetype --run-tests
+  - com.github.kjlaw89.archetype
+    --run-tests

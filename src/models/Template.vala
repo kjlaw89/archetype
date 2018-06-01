@@ -137,6 +137,31 @@ namespace App.Models {
                 return false;
             }
 
+            /* Replaceable variables
+             * com.generic.rdnn - replace with rdnn (filenames and content)
+             * {{ app-name }} - replace with title
+             * {{ punchline }} - replace with punchline
+             * {{ author }} - replace with author
+             * {{ author-email }} - replace with author_email
+             * {{ rdnn-path }} - replace with rdnn_path
+             * {{ repo-url }} - still need to get
+             * {{ website-url }} - still need to get 
+             * {{ exe-name }} - replace with executable
+             * {{ license }} - replace with selected license content
+             * {{ preamble }} - replace with preamble associated with selected license (replace first)
+             * {{ libraries-control }} - replace with libraries (formatted for debian control file)
+             * {{ libraries-readme }} - replace with libraries formatted for README.md
+             * {{ year }} - replace with current year (should be run after preamble)
+             * {{ screenshot-url }} - replace with nothing for now (no good way to get this)
+             * {{ app-center-bg }} - need to get
+             * {{ app-center-text }} - need to get
+             * {{ app-center-price }} - need to get (default to 0)
+             * {{ categories }} - need to get (replace with nothing)
+             * {{ keywords }} - need to get (replace with nothing)
+             * {{ terminal-mode }} - replace with true if terminal app, false otherwise
+             * {{ code-license }} - replace with Gtk.LICENSE constant for selected license (https://valadoc.org/gtk+-3.0/Gtk.License.html)
+             */
+
             // Clean up after the build process (only the .tar.gz should be left)
             clean (rdnn);
             return true;

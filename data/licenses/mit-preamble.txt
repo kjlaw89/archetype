@@ -1,1 +1,1 @@
-Copyright (C) {year}  {author} <{author_email}>
+Copyright (C) {{ year }}  {{ author }} <{{ author-email }}>

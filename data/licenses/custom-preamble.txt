@@ -1,3 +1,3 @@
-Copyright (C) {year}  {author} <{author_email}>
+Copyright (C) {{ year }}  {{ author }} <{{ author-email }}>
 
 This Source Code Form is subject to the terms located in the LICENSE.
