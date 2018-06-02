@@ -30,8 +30,7 @@ install:
   - npm install @elementaryos/houston
 
 script:
+  - export DISPLAY=:0
   - houston ci
     --name-domain com.github.kjlaw89.archetype
     --distribution $DIST
-  - com.github.kjlaw89.archetype
-    --run-tests
