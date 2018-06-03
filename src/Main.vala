@@ -50,7 +50,7 @@ public class Main {
         }
 
         if (testing) {
-            Gtk.init (ref args);
+            Gtk.init_check (ref args);
             var testing = new App.Tests.Testing (args);
             Idle.add (() => {
                 testing.run ();

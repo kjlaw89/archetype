@@ -23,6 +23,24 @@ function initialize {
     fi
 }
 
+function test {
+    initialize
+
+    export DISPLAY=:0
+    ./com.github.kjlaw89.archetype --run-tests
+    export DISPLAY=":0.0"
+
+    echo ""
+    
+    result=$?
+    if [ $result -gt 0 ]; then
+        echo "Failed testing"
+        exit 100
+    fi
+
+    echo "Tests passed!"
+}
+
 case $1 in
 "clean")
     sudo rm -rf ./build
@@ -46,29 +64,21 @@ case $1 in
     fi
 
     replace="sudo apt install"
-    missing=${output/dpkg-checkbuilddeps: error: Unmet build dependencies:/$replace}
+    pattern="(\([>=<0-9. ]+\))+"
+    sudo_replace=${output/dpkg-checkbuilddeps: error: Unmet build dependencies:/$replace}
+    command=$(sed -r -e "s/$pattern//g" <<< "$sudo_replace")
     
-    $missing
+    $command
     ;;
 "run")
     initialize
     ./com.github.kjlaw89.archetype
     ;;
 "test")
-    initialize
-    ninja test
+    test
     ;;
 "test-run")
-    initialize
-    ninja test
-
-    result=$?
-
-    if [ $result -gt 0 ]; then
-        echo "Project built but tests failed"
-        exit 100
-    fi
-
+    test
     ./com.github.kjlaw89.archetype
     ;;
 "uninstall")
