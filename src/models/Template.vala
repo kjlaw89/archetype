@@ -33,6 +33,7 @@ namespace App.Models {
         public string directory { get; set; }
         public string domain { get; set; }
         public string executable { get; set; }
+        public bool   git { get; set; default = false;}
         public string libraries { get; set; }
         public string license { get; set; }
         public string punchline { get; set; }
@@ -42,6 +43,13 @@ namespace App.Models {
         public string rdnn { get; set; }
         public string rdnn_path { get; set; }
         public string website { get; set; }
+
+        public string? headerbar_color { get; set; }
+        public string? headerbar_text_color { get; set; }
+        public string? headerbar_shadow_color { get; set; }
+        public string? accent_color { get; set; }
+        public string? store_color { get; set; }
+        public string? store_text_color { get; set; }
 
         /**
          * Constructs a new {@code Template} object.
@@ -56,6 +64,7 @@ namespace App.Models {
             this.directory = view.dir_path ();
             this.domain = view.domain_entry.text;
             this.executable = view.exec_entry.text;
+            this.git = view.git_switch.active;
             this.libraries = view.libraries_list ();
             this.license = view.license_combo.active_id;
             this.punchline = view.punchline_entry.text;
@@ -68,6 +77,14 @@ namespace App.Models {
 
             // Add defaults to libraries
             this.libraries = "meson, valac, debhelper, " + this.libraries;
+
+            // Get colors
+            headerbar_color = view.headerbar_color.hex ();
+            headerbar_text_color = view.headerbar_text_color.hex ();
+            headerbar_shadow_color = view.headerbar_shadow_color.hex ();
+            accent_color = view.accent_color.hex ();
+            store_color = view.store_color.hex ();
+            store_text_color = view.store_text_color.hex ();
         }
 
         public bool clean (string rdnn) {
@@ -175,6 +192,9 @@ namespace App.Models {
              * {{ terminal-mode }} - replace with true if terminal app, false otherwise
              * {{ license-code }} - replace with Gtk.LICENSE constant for selected license (https://valadoc.org/gtk+-3.0/Gtk.License.html)
              * {{ license-type }} - replace with README license for badge
+             * \/\* {{ styles }} \*\/ - replace with all of the colors provided for branding
+             * \/\* {{ dark-mode }} \*\/ - replace with code to enable dark mode
+             * \/\* {{ headerbar-style-code }} \*\/ - replace with style code for the headerbar
              * com.generic.rdnn - replace with rdnn (filenames and content)
              * move directory
              */
@@ -212,7 +232,8 @@ namespace App.Models {
             replace_in_files (export_path, "{{ year }}", dt.get_year ().to_string ());
             replace_in_files (export_path, "{{ month }}", dt.get_month ().to_string ());
             replace_in_files (export_path, "{{ day }}", dt.get_day_of_month ().to_string ());
-            replace_in_files (export_path, "{{ app-name }}", title);
+            replace_in_files (export_path, "{{ title }}", title);
+            replace_in_files (export_path, "{{ headerbar-title }}", (template != "widget") ? title : "");
             replace_in_files (export_path, "{{ punchline }}", punchline);
             replace_in_files (export_path, "{{ description }}", description);
             replace_in_files (export_path, "{{ author }}", author);
@@ -227,8 +248,20 @@ namespace App.Models {
             replace_in_files (export_path, "{{ license-type }}", license.up ());
             replace_in_files (export_path, "{{ repo-url }}", (repo_url == "") ? null : repo_url);
             replace_in_files (export_path, "{{ website-url }}", (website == "") ? null : website);
+            replace_in_files (export_path, "{{ store-color }}", (store_color == null) ? "#FFFFFF" : store_color);
+            replace_in_files (export_path, "{{ store-color-text }}", (store_text_color == null) ? "#000000" : store_text_color);
+            replace_in_files (export_path, "{{ store-price }}", "0");
+            replace_in_files (export_path, "{{ resizable }}", (template == "utility" || template =="widget") ? "false" : "true");
+            replace_in_files (export_path, "/* {{ styles }} */", generate_styles ());
+            replace_in_files (export_path, "/* {{ dark-mode }} */", dark_mode ? "Gtk.Settings.get_default ().set (\"gtk-application-prefer-dark-theme\", true);" : "");
+            replace_in_files (export_path, "/* {{ headerbar-style-code }} */", (template == "utility" || template =="widget") ? "get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);" : "");
+            replace_in_files (export_path, "/* {{ window-style-code }} */", generate_window_styles ());
             replace_in_files (export_path, "com.generic.rdnn", rdnn);
             replace_in_filenames (export_path, "com.generic.rdnn", rdnn);
+
+            if (git) {
+                initialize_git (export_path);
+            }
 
             // Move directory
             var source_dir = File.new_for_path (export_path);
@@ -337,6 +370,17 @@ namespace App.Models {
             return output;
         }
 
+        private void initialize_git (string path) {
+            string[] init_args = { "git", "init" };
+            Process.spawn_sync (path, init_args, Environ.get (), SpawnFlags.SEARCH_PATH, null);
+
+            string[] add_args = { "git", "add", "." };
+            Process.spawn_sync (path, add_args, Environ.get (), SpawnFlags.SEARCH_PATH, null);
+
+            string[] commit_args = { "git", "commit", "-m", "Initial commit for " + title };
+            Process.spawn_sync (path, commit_args, Environ.get (), SpawnFlags.SEARCH_PATH, null);
+        }
+
         private string format_libraries_control (string libraries) {
             var output = "";
 
@@ -392,6 +436,64 @@ namespace App.Models {
                 default:
                     return "Gtk.License.CUSTOM";
             }
+        }
+
+        private string generate_styles () {
+            var output = "";
+
+            if (headerbar_color != null) {
+                output += "@define-color colorPrimary %s;\n".printf (headerbar_color);
+            }
+            else {
+                output += "/* @define-color colorPrimary {{ headerbar-color }}; */\n";
+            }
+
+            if (headerbar_text_color != null) {
+                output += "@define-color textColorPrimary %s;\n".printf (headerbar_text_color);
+            }
+            else {
+                output += "/* @define-color textColorPrimary {{ headerbar-text-color }}; */\n";
+            }
+
+            if (headerbar_shadow_color != null) {
+                output += "@define-color textColorPrimaryShadow %s;\n".printf (headerbar_shadow_color);
+            }
+            else {
+                output += "/* @define-color textColorPrimaryShadow {{ headerbar-text-shadow-color }}; */\n";
+            }
+
+            if (accent_color != null) {
+                output += "@define-color colorAccent %s;\n".printf (accent_color);
+            }
+            else {
+                output += "/* @define-color colorAccent {{ accent-color }}; */\n";
+            }
+
+            // A utility should have the headerbar and body be the same color
+            // Use the font color specified for the headerbar for the primary font color
+            if (template == "utility") {
+                if (headerbar_color != null && headerbar_text_color != null) {
+                    output += "AppWindow { background-color: %s; color: %s; }\n".printf (headerbar_color, headerbar_text_color);
+                }
+                else {
+                    output += "/* AppWindow { background-color: {{ color-primary }}; color: {{ text-color-primary }}; } */n";
+                }
+            }
+
+            return output;
+        }
+
+        private string generate_window_styles () {
+            var output = "";
+
+            switch (template) {
+                case "widget":
+                case "utility":
+                    output += "get_style_context ().add_class (\"rounded\");";
+                    break;
+            }
+            
+            return output;
         }
     }
 }

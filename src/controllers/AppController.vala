@@ -50,6 +50,14 @@ namespace App.Controllers {
             this.app_view.generate.connect (() => {
                 this.generate ();
             });
+
+            // See if GIT is available to initialize
+            string output;
+            Process.spawn_command_line_sync ("which git", out output);
+
+            if (output.length == 0) {
+                this.app_view.disable_git ();
+            }
         }
 
         public void activate () {

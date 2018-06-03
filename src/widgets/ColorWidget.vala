@@ -28,6 +28,7 @@ namespace App.Widgets {
         public Gtk.ColorButton button { get; private set; }
         public Gtk.Label label { get; private set; }
         public Gdk.RGBA color { get { return button.rgba; } }
+        public bool is_set { get; private set; }
 
         /**
          * Constructs a new {@code ColorWidget} object.
@@ -39,18 +40,25 @@ namespace App.Widgets {
             button.title = desc ?? title;
             button.add_palette (Gtk.Orientation.HORIZONTAL, 9, this.colorPalette ());
             button.add_palette (Gtk.Orientation.HORIZONTAL, 9, this.grayPalette ());
+
             button.button_release_event.connect ((event) => {
                 if (event.button == Gdk.BUTTON_SECONDARY) {
                     button.rgba = Gdk.RGBA ();
+                    is_set = false;
                 }
 
                 return false;
+            });
+
+            button.color_set.connect (() => {
+                is_set = true;
             });
 
             if (color != null) {
                 var rgba = Gdk.RGBA ();
                 if (rgba.parse (color)) {
                     button.rgba = rgba;
+                    is_set = true;
                 }
             }
 
@@ -124,6 +132,17 @@ namespace App.Widgets {
             return colors;
         }
 
+        public string? hex () {
+            if (!is_set) {
+                return null;
+            }
 
+            var red = (int)(color.red * 255);
+            var green = (int)(color.green * 255);
+            var blue = (int)(color.blue * 255);
+
+            var output = "#%02X%02X%02X".printf (red, green, blue);
+            return output;
+        }
     }
 }

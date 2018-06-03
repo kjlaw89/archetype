@@ -28,11 +28,11 @@ function test {
 
     export DISPLAY=:0
     ./com.github.kjlaw89.archetype --run-tests
+    result=$?
+
     export DISPLAY=":0.0"
 
     echo ""
-    
-    result=$?
     if [ $result -gt 0 ]; then
         echo "Failed testing"
         exit 100

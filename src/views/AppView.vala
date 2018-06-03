@@ -40,6 +40,7 @@ namespace App.Views {
         private Gtk.Label           libraries_label;
         private Gtk.Label           punchline_label;
         private Gtk.Label           repo_label;
+        private Gtk.Label           store_label;
         private Gtk.Label           template_label;
         private Gtk.Label           title_label;
         private Gtk.Label           website_label;
@@ -68,9 +69,18 @@ namespace App.Views {
         public Gtk.Entry           punchline_entry              { get; private set; }
         public Gtk.Entry           repo_entry                   { get; private set; }
         public Gtk.Stack           stack_view                   { get; private set; }
+        public Gtk.Grid            store_box                    { get; private set; }
         public Gtk.ComboBoxText    template_combo               { get; private set; }
         public Gtk.Entry           title_entry                  { get; private set; }
         public Gtk.Entry           website_entry                { get; private set; }
+
+        // Colors
+        public ColorWidget         headerbar_color              { get; private set; }
+        public ColorWidget         headerbar_text_color         { get; private set; }
+        public ColorWidget         headerbar_shadow_color       { get; private set; }
+        public ColorWidget         accent_color                 { get; private set; }
+        public ColorWidget         store_color                  { get; private set; }
+        public ColorWidget         store_text_color             { get; private set; }
 
         private string _stage;     // Track stage through variable for testing
         public string stage { 
@@ -328,6 +338,12 @@ namespace App.Views {
             libraries_list ();
         }
 
+        public void disable_git () {
+            git_label.hide ();
+            git_switch.hide ();
+            git_switch.active = false;
+        }
+
         private void build_project_form () {
             var grid = new Gtk.Grid ();
             grid.expand = true;
@@ -530,23 +546,6 @@ namespace App.Views {
 
             grid.attach (website_label, 0, 2, 1, 1);
             grid.attach (website_entry, 1, 2, 3, 1);
-            
-
-            // Repo entry
-            repo_entry = new Gtk.Entry ();
-            repo_entry.hexpand = true;
-            repo_entry.placeholder_text = _("https://github.com/.../...");
-            repo_entry.key_release_event.connect ((key) => {
-                validate_next ();
-                return false;
-            });
-
-            repo_label = new Gtk.Label.with_mnemonic (_("_Repository URL") + ":");
-            repo_label.halign = Gtk.Align.END;
-            repo_label.mnemonic_widget = repo_entry;
-
-            grid.attach (repo_label, 0, 3, 1, 1);
-            grid.attach (repo_entry, 1, 3, 3, 1);
 
             // Punchline entry
             punchline_entry = new Gtk.Entry ();
@@ -561,8 +560,8 @@ namespace App.Views {
             punchline_label.halign = Gtk.Align.END;
             punchline_label.mnemonic_widget = punchline_entry;
 
-            grid.attach (punchline_label, 0, 4, 1, 1);
-            grid.attach (punchline_entry, 1, 4, 3, 1);
+            grid.attach (punchline_label, 0, 3, 1, 1);
+            grid.attach (punchline_entry, 1, 3, 3, 1);
 
             // Long description entry
             description_textview = new Gtk.TextView ();
@@ -586,8 +585,8 @@ namespace App.Views {
             desc_frame.add (desc_scroll);
             desc_scroll.add (description_textview);
 
-            grid.attach (description_label, 0, 5, 1, 1);
-            grid.attach (desc_frame, 1, 5, 3, 1);
+            grid.attach (description_label, 0, 4, 1, 1);
+            grid.attach (desc_frame, 1, 4, 3, 1);
 
             this.stack_view.add_named (grid, "author");
         }
@@ -616,7 +615,7 @@ namespace App.Views {
             grid.attach (dark_mode_switch, 1, 1, 1, 1);
 
             // Branding colors box
-            branding_label = new Gtk.Label.with_mnemonic (_("Colors") + ":");
+            branding_label = new Gtk.Label.with_mnemonic (_("App. Colors") + ":");
             branding_label.valign = Gtk.Align.START;
             branding_label.halign = Gtk.Align.END;
 
@@ -626,18 +625,38 @@ namespace App.Views {
             branding_box.column_spacing = 12;
             branding_box.row_spacing = 12;
 
-            var color1 = new ColorWidget ("Headerbar", "Headerbar");
-            var color2 = new ColorWidget ("H. Text", "Headerbar Text");
-            var color3 = new ColorWidget ("H. Text Shadow", "Headerbar Text Shadow");
-            var color4 = new ColorWidget ("Accent Color", "Accent Color");
+            headerbar_color = new ColorWidget ("Headerbar", "Headerbar");
+            headerbar_text_color = new ColorWidget ("H. Text", "Headerbar Text");
+            headerbar_shadow_color = new ColorWidget ("H. Text Shadow", "Headerbar Text Shadow");
+            accent_color = new ColorWidget ("Accent Color", "Accent Color");
 
-            branding_box.attach (color1, 0, 0);
-            branding_box.attach (color2, 1, 0);
-            branding_box.attach (color3, 2, 0);
-            branding_box.attach (color4, 3, 0);
+            branding_box.attach (headerbar_color, 0, 0);
+            branding_box.attach (headerbar_text_color, 1, 0);
+            branding_box.attach (headerbar_shadow_color, 2, 0);
+            branding_box.attach (accent_color, 3, 0);
 
             grid.attach (branding_label, 0, 2, 1, 1);
             grid.attach (branding_box, 1, 2, 3, 1);
+
+            // Store colors box
+            store_label = new Gtk.Label.with_mnemonic (_("Store Colors") + ":");
+            store_label.valign = Gtk.Align.START;
+            store_label.halign = Gtk.Align.END;
+
+            store_box = new Gtk.Grid ();
+            store_box.hexpand = true;
+            store_box.column_homogeneous = true;
+            store_box.column_spacing = 12;
+            store_box.row_spacing = 12;
+
+            store_color = new ColorWidget ("Background", "Store background color");
+            store_text_color = new ColorWidget ("Text", "Store text color");
+
+            store_box.attach (store_color, 0, 0);
+            store_box.attach (store_text_color, 1, 0);
+
+            grid.attach (store_label, 0, 3, 1, 1);
+            grid.attach (store_box, 1, 3, 3, 1);
 
             this.stack_view.add_named (grid, "branding");
         }
@@ -704,6 +723,22 @@ namespace App.Views {
             grid.attach (libraries_scrolled, 1, 2, 1, 1);
             grid.attach (libraries_button, 2, 2, 1, 1);
 
+            // Repo entry
+            repo_entry = new Gtk.Entry ();
+            repo_entry.hexpand = true;
+            repo_entry.placeholder_text = _("https://github.com/.../...");
+            repo_entry.key_release_event.connect ((key) => {
+                validate_next ();
+                return false;
+            });
+
+            repo_label = new Gtk.Label.with_mnemonic (_("_Repository URL") + ":");
+            repo_label.halign = Gtk.Align.END;
+            repo_label.mnemonic_widget = repo_entry;
+
+            grid.attach (repo_label, 0, 3, 1, 1);
+            grid.attach (repo_entry, 1, 3, 3, 1);
+
             // GIT initialize switch
             git_label = new Gtk.Label.with_mnemonic (_("_Initialize GIT") + ":");
             git_label.halign = Gtk.Align.END;
@@ -711,9 +746,10 @@ namespace App.Views {
             git_switch = new Gtk.Switch ();
             git_switch.hexpand = false;
             git_switch.halign = Gtk.Align.START;
+            git_switch.active = true;
 
-            grid.attach (git_label, 0, 3, 1, 1);
-            grid.attach (git_switch, 1, 3, 1, 1);
+            grid.attach (git_label, 0, 4, 1, 1);
+            grid.attach (git_switch, 1, 4, 1, 1);
 
             this.stack_view.add_named (grid, "development");
         }

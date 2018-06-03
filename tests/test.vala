@@ -61,12 +61,13 @@ namespace App.Tests {
             });
 
             Test.add_data_func ("/app/colorwidget", () => {
-                var widget = new App.Widgets.ColorWidget ("TButton", "Test Button", "#FFFFFF");
+                var widget = new App.Widgets.ColorWidget ("TButton", "Test Button", "#3AB3EF");
 
                 Assert.string_compare ("TButton", widget.label.label);
                 Assert.string_compare ("Test Button", widget.label.tooltip_text);
                 Assert.string_compare ("Test Button", widget.button.title);
-                Assert.string_compare ("rgb(255,255,255)", widget.color.to_string ());
+                Assert.string_compare ("rgb(58,179,239)", widget.color.to_string ());
+                Assert.string_compare ("#3AB3EF", widget.hex ());
             });
 
             Test.add_data_func ("/app/form/project/validate", () => {
@@ -241,14 +242,22 @@ namespace App.Tests {
                 Process.spawn_command_line_sync ("rm -rf /tmp/archetype-testing");
                 Process.spawn_command_line_sync ("mkdir /tmp/archetype-testing");
 
-                var template = new App.Models.Template (view);
-                Assert.true (template.generate ());
+                try {
+                    var template = new App.Models.Template (view);
+                    Assert.true (template.generate ());
 
-                var new_dir = File.new_for_path ("/tmp/archetype-testing/com.github.test");
-                Assert.true (new_dir.query_exists ());
+                    var new_dir = File.new_for_path ("/tmp/archetype-testing/com.github.test");
+                    Assert.true (new_dir.query_exists ());
 
-                var old_dir = File.new_for_path ("/tmp/com.github.test");
-                Assert.false (old_dir.query_exists ());
+                    var old_dir = File.new_for_path ("/tmp/com.github.test");
+                    Assert.false (old_dir.query_exists ());
+
+                    var git_dir = File.new_for_path ("/tmp/archetype-testing/com.github.test/.git");
+                    Assert.true (git_dir.query_exists ());
+                }
+                catch (Error e) {
+                    error ("Unable to generate template - " + e.message);
+                }
             });
         }
 

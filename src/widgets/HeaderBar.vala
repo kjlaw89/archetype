@@ -36,10 +36,7 @@ namespace App.Widgets {
          * @see icon_settings
          */
         public HeaderBar () {
-            var context = get_style_context ();
-            context.add_class ("titlebar");
-            context.add_class ("default-decoration");
-            context.add_class (Gtk.STYLE_CLASS_FLAT);
+            get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);
 
             this.set_title ("Archetype");
             this.show_close_button = true;
