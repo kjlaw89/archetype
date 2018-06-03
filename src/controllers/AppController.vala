@@ -63,7 +63,11 @@ namespace App.Controllers {
 
         private void generate () {
             var template = new Template (this.app_view);
-            template.generate ();
+            if (template.generate ()) {
+                var directory = File.new_for_path (template.directory);
+                Granite.Services.System.open (directory);
+                quit ();
+            }
         }
     }
 }

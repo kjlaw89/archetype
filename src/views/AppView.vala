@@ -39,8 +39,10 @@ namespace App.Views {
         private Gtk.Label           license_label;
         private Gtk.Label           libraries_label;
         private Gtk.Label           punchline_label;
+        private Gtk.Label           repo_label;
         private Gtk.Label           template_label;
         private Gtk.Label           title_label;
+        private Gtk.Label           website_label;
         
         // Widgets
         public Gtk.Entry           author_entry                 { get; private set; }
@@ -48,6 +50,7 @@ namespace App.Views {
         public Gtk.Button          back_button                  { get; private set; }
         public Gtk.Grid            branding_box                 { get; private set; }
         public Gtk.Switch          dark_mode_switch             { get; private set; }
+        public Gtk.TextView        description_textview         { get; private set; }
         public Gtk.FileChooserButton directory_button           { get; private set; }
         public Gtk.Label           directory_executable_label   { get; private set; }
         public Gtk.Entry           domain_entry                 { get; private set; }
@@ -62,11 +65,12 @@ namespace App.Views {
         public Gtk.ListBox         libraries_listbox            { get; private set; }
         public Gtk.Popover         libraries_popover            { get; private set; }
         public Gtk.Label           libraries_values_label       { get; private set; }
-        public Gtk.TextView        description_textview           { get; private set; }
-        public Gtk.Entry           punchline_entry             { get; private set; }
+        public Gtk.Entry           punchline_entry              { get; private set; }
+        public Gtk.Entry           repo_entry                   { get; private set; }
         public Gtk.Stack           stack_view                   { get; private set; }
         public Gtk.ComboBoxText    template_combo               { get; private set; }
         public Gtk.Entry           title_entry                  { get; private set; }
+        public Gtk.Entry           website_entry                { get; private set; }
 
         private string _stage;     // Track stage through variable for testing
         public string stage { 
@@ -294,8 +298,8 @@ namespace App.Views {
                 directory = "..." + directory.substring (directory.length - 35);
             }
 
-            directory_executable_label.label = directory + "/" + exec_entry.text;
-            return full_path + "/" + exec_entry.text;
+            directory_executable_label.label = directory + "/" + rdnn_executable ();
+            return directory_executable_label.label;
         }
 
         public string libraries_list () {
@@ -335,7 +339,7 @@ namespace App.Views {
             // Template list
             template_combo = new Gtk.ComboBoxText ();
             template_combo.hexpand = true;
-            template_combo.append ("windowed", "Granite App (Headerbar + Welcome screen)");
+            template_combo.append ("granite", "Granite App (Headerbar + Welcome screen)");
             template_combo.append ("utility", "Utility (Flat headerbar, no maximize)");
             template_combo.append ("widget", "Widget (No headerbar, sticky to desktop)");
             template_combo.append ("blank", "Blank GTK Window");
@@ -344,7 +348,7 @@ namespace App.Views {
                 validate_next ();
 
                 switch (template_combo.active_id) {
-                    case "windowed":
+                    case "granite":
                     case "utility":
                     case "widget":
                         toggle_library ("libgranite-dev", true);
@@ -384,7 +388,7 @@ namespace App.Views {
             });
 
             license_lookup_button = new Gtk.Button.from_icon_name ("dialog-question", Gtk.IconSize.MENU);
-            license_lookup_button.tooltip_text = "Lookup license";
+            license_lookup_button.tooltip_text = _("See license");
             license_lookup_button.clicked.connect (() => { this.show_license (); });
 
             license_label = new Gtk.Label.with_mnemonic (_("_License") + ":");
@@ -419,7 +423,7 @@ namespace App.Views {
             exec_entry.hexpand = true;
             exec_entry.placeholder_text = "myapp";
             exec_entry.secondary_icon_name = "dialog-information-symbolic";
-            exec_entry.secondary_icon_tooltip_text = "Executable names should be lowercase alphanumeric [a-z0-9]";
+            exec_entry.secondary_icon_tooltip_text = _("Executable names should be lowercase alphanumeric [a-z0-9]");
             exec_entry.key_release_event.connect ((key) => {
                 validate_next ();
                 rdnn_executable ();
@@ -440,9 +444,9 @@ namespace App.Views {
             // Domain Entry
             domain_entry = new Gtk.Entry ();
             domain_entry.hexpand = true;
-            domain_entry.placeholder_text = "com.github.you.myapp";
+            domain_entry.placeholder_text = "com.github.you";
             domain_entry.secondary_icon_name = "dialog-information-symbolic";
-            domain_entry.secondary_icon_tooltip_text = "Should be a valid RDNN";
+            domain_entry.secondary_icon_tooltip_text = _("Should be a valid RDNN");
             domain_entry.key_release_event.connect ((key) => {
                 validate_next ();
                 rdnn_executable ();
@@ -481,7 +485,7 @@ namespace App.Views {
             // Author entry
             author_entry = new Gtk.Entry ();
             author_entry.hexpand = true;
-            author_entry.placeholder_text = "Your Name";
+            author_entry.placeholder_text = _("Your name");
             author_entry.key_release_event.connect ((key) => {
                 validate_next ();
                 return false;
@@ -509,12 +513,45 @@ namespace App.Views {
 
             grid.attach (author_email_label, 2, 1, 1, 1);
             grid.attach (author_email_entry, 3, 1, 1, 1);
+
+
+            // Website entry
+            website_entry = new Gtk.Entry ();
+            website_entry.hexpand = true;
+            website_entry.placeholder_text = _("https://www.yourwebsite.com/");
+            website_entry.key_release_event.connect ((key) => {
+                validate_next ();
+                return false;
+            });
+
+            website_label = new Gtk.Label.with_mnemonic (_("_Website") + ":");
+            website_label.halign = Gtk.Align.END;
+            website_label.mnemonic_widget = website_entry;
+
+            grid.attach (website_label, 0, 2, 1, 1);
+            grid.attach (website_entry, 1, 2, 3, 1);
             
 
-            // Short description entry
+            // Repo entry
+            repo_entry = new Gtk.Entry ();
+            repo_entry.hexpand = true;
+            repo_entry.placeholder_text = _("https://github.com/.../...");
+            repo_entry.key_release_event.connect ((key) => {
+                validate_next ();
+                return false;
+            });
+
+            repo_label = new Gtk.Label.with_mnemonic (_("_Repository URL") + ":");
+            repo_label.halign = Gtk.Align.END;
+            repo_label.mnemonic_widget = repo_entry;
+
+            grid.attach (repo_label, 0, 3, 1, 1);
+            grid.attach (repo_entry, 1, 3, 3, 1);
+
+            // Punchline entry
             punchline_entry = new Gtk.Entry ();
             punchline_entry.hexpand = true;
-            punchline_entry.placeholder_text = "A short punchline";
+            punchline_entry.placeholder_text = _("A short punchline");
             punchline_entry.key_release_event.connect ((key) => {
                 validate_next ();
                 return false;
@@ -524,8 +561,8 @@ namespace App.Views {
             punchline_label.halign = Gtk.Align.END;
             punchline_label.mnemonic_widget = punchline_entry;
 
-            grid.attach (punchline_label, 0, 2, 1, 1);
-            grid.attach (punchline_entry, 1, 2, 3, 1);
+            grid.attach (punchline_label, 0, 4, 1, 1);
+            grid.attach (punchline_entry, 1, 4, 3, 1);
 
             // Long description entry
             description_textview = new Gtk.TextView ();
@@ -549,8 +586,8 @@ namespace App.Views {
             desc_frame.add (desc_scroll);
             desc_scroll.add (description_textview);
 
-            grid.attach (description_label, 0, 3, 1, 1);
-            grid.attach (desc_frame, 1, 3, 3, 1);
+            grid.attach (description_label, 0, 5, 1, 1);
+            grid.attach (desc_frame, 1, 5, 3, 1);
 
             this.stack_view.add_named (grid, "author");
         }

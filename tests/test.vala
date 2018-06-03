@@ -130,10 +130,12 @@ namespace App.Tests {
                 var view = new App.Views.AppView ();
                 
                 view.exec_entry.text = "test";
+                view.domain_entry.text = "com.github.person";
+                view.domain_entry.changed ();
                 view.directory_button.set_current_folder ("/unit-test");
                 view.directory_button.file_set ();
 
-                var directory = "/unit-test/test";
+                var directory = "/unit-test/com.github.person.test";
                 Assert.string_compare (directory, view.directory_executable_label.label);
             });
 
@@ -161,7 +163,9 @@ namespace App.Tests {
                 view.author_email_entry.text = "test@test.com";
                 view.punchline_entry.text = "Punch!";
                 view.dark_mode_switch.active = true;
-                view.directory_button.set_uri ("file:///tmp/");
+                view.directory_button.set_uri ("file:///tmp/archetype-test");
+                view.repo_entry.text = "https://github.com/test/test";
+                view.website_entry.text = "https://www.test.com";
 
                 var template = new App.Models.Template (view);
                 Assert.string_compare ("blank", template.template);
@@ -174,7 +178,9 @@ namespace App.Tests {
                 Assert.string_compare ("test@test.com", template.author_email);
                 Assert.string_compare ("Punch!", template.punchline);
                 Assert.true (template.dark_mode);
-                Assert.string_compare ("file:///tmp", template.directory);
+                Assert.string_compare ("/tmp/archetype-test/com.github.test", template.directory);
+                Assert.string_compare ("https://github.com/test/test", template.repo_url);
+                Assert.string_compare ("https://www.test.com", template.website);
             });
 
             Test.add_data_func ("/template/create_and_clean", () => {
@@ -185,13 +191,65 @@ namespace App.Tests {
                 // Reset to a good state by deleting any existing files
                 template.clean (name);
 
-                Assert.true (template.generate_folder (name));
+                Assert.true (template.generate_folder (name, "granite"));
 
                 // Test that our file was extract (see if README.md exists)
                 var readme_file = File.new_for_path ("/tmp/"+ name +"/README.md");
                 Assert.true (readme_file.query_exists ());
                 Assert.true (template.clean (name));
-            });            
+            });
+
+            Test.add_data_func ("/template/replace", () => {
+                var view = new App.Views.AppView ();
+                var template = new App.Models.Template (view);
+                var name = "com.test.app";
+                template.generate_folder (name, "granite");
+                Assert.int_compare (1, template.replace_in_files ("/tmp/com.test.app", "{{ license }}", "testing"));
+                
+                var file = File.new_for_path ("/tmp/com.test.app/LICENSE.md");
+                uint8[] data;
+
+                try {
+                    if (!file.load_contents (null, out data, null)) {
+                        error ("Failed to load content of /tmp/com.test.app/LICENSE.md");
+                    }
+                }
+                catch (Error e) {
+                    error ("Failed to load /tmp/com.test.app/LICENSE.md");
+                }
+
+                Assert.string_compare ("testing\n", (string)data);
+            });
+            
+            Test.add_data_func ("/template/generate", () => {
+                var view = new App.Views.AppView ();
+
+                view.template_combo.active_id = "granite";
+                view.license_combo.active_id = "lgpl-3.0";
+                view.title_entry.text = "Test";
+                view.exec_entry.text = "test";
+                view.domain_entry.text = "com.github";
+                view.domain_entry.changed ();
+                view.author_entry.text = "Test Person";
+                view.author_email_entry.text = "test@test.com";
+                view.punchline_entry.text = "Punch!";
+                view.dark_mode_switch.active = true;
+                view.directory_button.set_uri ("file:///tmp/archetype-testing");
+                view.repo_entry.text = "https://github.com/test/test";
+                view.website_entry.text = "https://www.test.com";
+
+                Process.spawn_command_line_sync ("rm -rf /tmp/archetype-testing");
+                Process.spawn_command_line_sync ("mkdir /tmp/archetype-testing");
+
+                var template = new App.Models.Template (view);
+                Assert.true (template.generate ());
+
+                var new_dir = File.new_for_path ("/tmp/archetype-testing/com.github.test");
+                Assert.true (new_dir.query_exists ());
+
+                var old_dir = File.new_for_path ("/tmp/com.github.test");
+                Assert.false (old_dir.query_exists ());
+            });
         }
 
         public void run () {

@@ -42,7 +42,7 @@ Use the App script to simplify installation by running `./app install-deps`
 
 ```
 git clone https://github.com/kjlaw89/archetype.git && cd archetype
-./app install
+./app install-deps && ./app install
 ```
 
 ### Deconstruct

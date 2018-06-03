@@ -33,6 +33,6 @@
     </gresource>
 
     <gresource prefix="/com/github/kjlaw89/archetype/templates">
-      <file alias="windowed" compressed="true">templates/windowed.tar.gz</file>
+      <file alias="granite" compressed="true">templates/granite.tar.gz</file>
     </gresource>
 </gresources>
