@@ -47,6 +47,6 @@ e = executable('com.github.kjlaw89.archetype',
     install : true
 )
 
-test('tests', e, args : ['--run-tests'])
+#test('tests', e, args : ['--run-tests'])
 
 meson.add_install_script('meson/post_install.py')
