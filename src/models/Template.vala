@@ -36,6 +36,7 @@ namespace App.Models {
         public bool   git { get; set; default = false;}
         public string libraries { get; set; }
         public string license { get; set; }
+        public string packages { get; set; }
         public string punchline { get; set; }
         public string template { get; set; }
         public string title { get; set; }
@@ -67,6 +68,7 @@ namespace App.Models {
             this.git = view.git_switch.active;
             this.libraries = view.libraries_list ();
             this.license = view.license_combo.active_id;
+            this.packages = view.packages_list ();
             this.punchline = view.punchline_entry.text;
             this.template = view.template_combo.active_id;
             this.title = view.title_entry.text;
@@ -75,8 +77,9 @@ namespace App.Models {
             this.rdnn_path = "/" + rdnn.replace (".", "/") +"/";
             this.website = view.website_entry.text;
 
-            // Add defaults to libraries
-            this.libraries = "meson, valac, debhelper, " + this.libraries;
+            // Add defaults to libraries (used in meson dependencies) and packages (use for apt dev packages)
+            this.libraries = "gobject-2.0, glib-2.0, " + this.libraries;
+            this.packages = "meson, valac, debhelper, " + this.packages;
 
             // Get colors
             headerbar_color = view.headerbar_color.hex ();
@@ -181,8 +184,9 @@ namespace App.Models {
              * {{ repo-url }} - still need to get
              * {{ website-url }} - still need to get 
              * {{ exe-name }} - replace with executable
-             * {{ libraries-control }} - replace with libraries (formatted for debian control file)
-             * {{ libraries-readme }} - replace with libraries formatted for README.md
+             * {{ libraries-control }} - replace with packages (formatted for debian control file)
+             * {{ libraries-readme }} - replace with packages formatted for README.md
+             * {{ libraries-meson }} - replace with libraries formatted for meson
              * {{ screenshot-url }} - replace with nothing for now (no good way to get this)
              * {{ app-center-bg }} - need to get
              * {{ app-center-text }} - need to get
@@ -209,7 +213,8 @@ namespace App.Models {
                 }
             }
             catch (Error e) {
-                error ("Unable to get license " + e.message);
+                warning ("Unable to get license " + e.message);
+                return false;
             }
 
             var license_preamble_file = File.new_for_uri ("resource:///com/github/kjlaw89/archetype/licenses/"+ this.license +"-preamble");
@@ -222,7 +227,8 @@ namespace App.Models {
                 }
             }
             catch (Error e) {
-                error ("Unable to get license preamble " + e.message);
+                warning ("Unable to get license preamble " + e.message);
+                return false;
             }
 
             var dt = new DateTime.now_local ();
@@ -239,8 +245,9 @@ namespace App.Models {
             replace_in_files (export_path, "{{ author }}", author);
             replace_in_files (export_path, "{{ author-email }}", author_email);
             replace_in_files (export_path, "{{ rdnn-path }}", rdnn_path);
-            replace_in_files (export_path, "{{ libraries-control }}", format_libraries_control (libraries));
-            replace_in_files (export_path, "{{ libraries-readme }}", format_libraries_readme (libraries));
+            replace_in_files (export_path, "{{ libraries-control }}", format_libraries_control (packages));
+            replace_in_files (export_path, "{{ libraries-readme }}", format_libraries_readme (packages));
+            replace_in_files (export_path, "{{ libraries-meson }}", format_libraries_meson (libraries));
             replace_in_files (export_path, "{{ categories }}", "");
             replace_in_files (export_path, "{{ keywords }}", "");
             replace_in_files (export_path, "{{ terminal_mode }}", (template == "terminal" ? "true" : "false"));
@@ -254,7 +261,7 @@ namespace App.Models {
             replace_in_files (export_path, "{{ resizable }}", (template == "utility" || template =="widget") ? "false" : "true");
             replace_in_files (export_path, "/* {{ styles }} */", generate_styles ());
             replace_in_files (export_path, "/* {{ dark-mode }} */", dark_mode ? "Gtk.Settings.get_default ().set (\"gtk-application-prefer-dark-theme\", true);" : "");
-            replace_in_files (export_path, "/* {{ headerbar-style-code }} */", (template == "utility" || template =="widget") ? "get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);" : "");
+            replace_in_files (export_path, "/* {{ headerbar-style-code }} */", (template == "utility") ? "get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);" : "");
             replace_in_files (export_path, "/* {{ window-style-code }} */", generate_window_styles ());
             replace_in_files (export_path, "com.generic.rdnn", rdnn);
             replace_in_filenames (export_path, "com.generic.rdnn", rdnn);
@@ -269,11 +276,15 @@ namespace App.Models {
 
             try {
                 if (!source_dir.move (dest_dir, FileCopyFlags.NONE)) {
-                    error ("Unable to move temp directory to " + directory);
+                    warning ("Unable to move temp directory to " + directory);
+                    clean (rdnn);
+                    return false;
                 }
             }
             catch (Error e) {
-                error ("Unable to move temp directory to "+ directory +" - "+ e.message);
+                warning ("Unable to move temp directory to "+ directory +" - "+ e.message);
+                clean (rdnn);
+                return false;
             }
             
 
@@ -344,8 +355,14 @@ namespace App.Models {
                 var file_split = f.split (":");
                 var file = File.new_for_path (file_split[0]);
                 var new_name = file.get_basename ().replace (search, replace);
-                file.set_display_name (new_name);
-                modified++;
+
+                try {
+                    file.set_display_name (new_name);
+                    modified++;
+                }
+                catch (Error e) {
+                    warning ("Unable to rename file "+ file_split[0] +" - "+ e.message);
+                }
             }
 
             return modified;
@@ -371,14 +388,19 @@ namespace App.Models {
         }
 
         private void initialize_git (string path) {
-            string[] init_args = { "git", "init" };
-            Process.spawn_sync (path, init_args, Environ.get (), SpawnFlags.SEARCH_PATH, null);
+            try {
+                string[] init_args = { "git", "init" };
+                Process.spawn_sync (path, init_args, Environ.get (), SpawnFlags.SEARCH_PATH, null);
 
-            string[] add_args = { "git", "add", "." };
-            Process.spawn_sync (path, add_args, Environ.get (), SpawnFlags.SEARCH_PATH, null);
+                string[] add_args = { "git", "add", "." };
+                Process.spawn_sync (path, add_args, Environ.get (), SpawnFlags.SEARCH_PATH, null);
 
-            string[] commit_args = { "git", "commit", "-m", "Initial commit for " + title };
-            Process.spawn_sync (path, commit_args, Environ.get (), SpawnFlags.SEARCH_PATH, null);
+                string[] commit_args = { "git", "commit", "-m", "Initial commit for " + title };
+                Process.spawn_sync (path, commit_args, Environ.get (), SpawnFlags.SEARCH_PATH, null);
+            }
+            catch (Error e) {
+                warning ("Unable to initialize GIT " + e.message);
+            }
         }
 
         private string format_libraries_control (string libraries) {
@@ -414,6 +436,30 @@ namespace App.Models {
                 }
 
                 output += " - `" + library.strip () +"`\n";
+            }
+
+            return output;
+        }
+
+        private string format_libraries_meson (string libraries) {
+            var output = "";
+
+            var i = 0;
+            var libs = libraries.split (",");
+            foreach (var l in libs) {
+                var library = l.strip ();
+
+                if (i == 0) {
+                    output = "dependency('"+ library +"'),\n";
+                }
+                else if (i == libs.length - 1) {
+                    output += "    dependency('"+ library +"')";
+                }
+                else {
+                    output += "    dependency('"+ library +"'),\n";
+                }
+                
+                i++;
             }
 
             return output;
@@ -469,15 +515,15 @@ namespace App.Models {
                 output += "/* @define-color colorAccent {{ accent-color }}; */\n";
             }
 
-            // A utility should have the headerbar and body be the same color
+            // A widget should have the headerbar and body be the same color
             // Use the font color specified for the headerbar for the primary font color
-            if (template == "utility") {
-                if (headerbar_color != null && headerbar_text_color != null) {
-                    output += "AppWindow { background-color: %s; color: %s; }\n".printf (headerbar_color, headerbar_text_color);
-                }
-                else {
-                    output += "/* AppWindow { background-color: {{ color-primary }}; color: {{ text-color-primary }}; } */n";
-                }
+            if (template == "widget") {
+                output += "@define-color bg_highlight_color shade (@colorPrimary, 1.4);\n\n";
+                output += ".titlebar, .background {\n";
+                output += "    background-color: @colorPrimary; color: @textColorPrimary;\n";
+                output += "    icon-shadow: 0 1px 1px shade (@textColorPrimaryShadow, 0.82)\n";
+                output += "    text-shadow: 0 1px 1px shade (@textColorPrimaryShadow, 0.82);\n";
+                output += "}\n";
             }
 
             return output;
@@ -488,6 +534,10 @@ namespace App.Models {
 
             switch (template) {
                 case "widget":
+                    output += "get_style_context ().add_class (Gtk.STYLE_CLASS_FLAT);\n";
+                    output += "            set_keep_below (true);\n";
+                    output += "            stick ();";
+                    break;
                 case "utility":
                     output += "get_style_context ().add_class (\"rounded\");";
                     break;

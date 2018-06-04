@@ -62,10 +62,9 @@ namespace App.Views {
         public Gtk.Button          next_button                  { get; private set; }
         public Gtk.ComboBoxText    license_combo                { get; private set; }
         public Gtk.Button          license_lookup_button        { get; private set; }
-        public Gtk.Button          libraries_button             { get; private set; }
         public Gtk.ListBox         libraries_listbox            { get; private set; }
         public Gtk.Popover         libraries_popover            { get; private set; }
-        public Gtk.Label           libraries_values_label       { get; private set; }
+        public Gtk.Entry           libraries_values_entry       { get; private set; }
         public Gtk.Entry           punchline_entry              { get; private set; }
         public Gtk.Entry           repo_entry                   { get; private set; }
         public Gtk.Stack           stack_view                   { get; private set; }
@@ -322,8 +321,20 @@ namespace App.Views {
             }
 
             var output = string.joinv (", ", list.data);
+            libraries_values_entry.text = output;
+            return output;
+        }
 
-            libraries_values_label.label = output;
+        public string packages_list () {
+            var list = new Array<string?> ();
+            foreach (var widget in libraries_listbox.get_children ()) {
+                LibraryRow row = (LibraryRow)widget;
+                if (row.active) {
+                    list.append_val (row.library.package);
+                }
+            }
+
+            var output = string.joinv (", ", list.data);
             return output;
         }
 
@@ -700,28 +711,21 @@ namespace App.Views {
             libraries_label.valign = Gtk.Align.START;
             libraries_label.margin_top = 4;            
 
-            libraries_values_label = new Gtk.Label (null);
-            libraries_values_label.selectable = true;
-            libraries_values_label.halign = Gtk.Align.START;
-            libraries_values_label.margin_left = 12;
-            libraries_values_label.margin_right = 12;
+            libraries_values_entry = new Gtk.Entry ();
+            libraries_values_entry.sensitive = true;
+            libraries_values_entry.secondary_icon_name = "tag-new";
+            libraries_values_entry.secondary_icon_tooltip_text = _("Modify selected libraries");
 
-            var libraries_scrolled = new Gtk.ScrolledWindow (null, null);
-            libraries_scrolled.get_style_context ().add_class ("libraries_scrolled");
+            libraries_values_entry.key_press_event.connect ((event) => {
+                return true;
+            });
 
-            var libraries_viewport = new Gtk.Viewport (null, null);
-            libraries_viewport.add (libraries_values_label);
-            libraries_scrolled.add (libraries_viewport);
-
-            libraries_button = new Gtk.Button.from_icon_name ("tag-new", Gtk.IconSize.SMALL_TOOLBAR);
-            libraries_button.halign = Gtk.Align.START;
-            libraries_button.clicked.connect (() => {
+            libraries_values_entry.icon_release.connect ((pos, event) => {
                 show_libraries_list ();
             });
 
             grid.attach (libraries_label, 0, 2, 1, 1);
-            grid.attach (libraries_scrolled, 1, 2, 1, 1);
-            grid.attach (libraries_button, 2, 2, 1, 1);
+            grid.attach (libraries_values_entry, 1, 2, 3, 1);
 
             // Repo entry
             repo_entry = new Gtk.Entry ();
@@ -781,8 +785,8 @@ namespace App.Views {
             libraries_scrolled.height_request = 250;
             libraries_scrolled.add (libraries_viewport);
 
-            libraries_popover = new Gtk.Popover (libraries_button);
-            libraries_popover.position = Gtk.PositionType.BOTTOM;
+            libraries_popover = new Gtk.Popover (libraries_label);
+            libraries_popover.position = Gtk.PositionType.RIGHT;
             libraries_popover.add (libraries_scrolled);
             libraries_popover.closed.connect (() => {
                 this.libraries_list ();

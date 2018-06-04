@@ -72,14 +72,14 @@ case $1 in
     ;;
 "run")
     initialize
-    ./com.github.kjlaw89.archetype
+    ./com.github.kjlaw89.archetype "${@:2}"
     ;;
 "test")
     test
     ;;
 "test-run")
     test
-    ./com.github.kjlaw89.archetype
+    ./com.github.kjlaw89.archetype "${@:2}"
     ;;
 "uninstall")
     initialize

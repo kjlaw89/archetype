@@ -86,6 +86,7 @@ namespace App.Widgets {
 
     public struct Library {
         public string library;
+        public string package;
         public string name;
         public string description;
         public bool is_default;

@@ -35,5 +35,8 @@
     <gresource prefix="/com/github/kjlaw89/archetype/templates">
       <file alias="granite" compressed="true">templates/granite.tar.gz</file>
       <file alias="utility" compressed="true">templates/utility.tar.gz</file>
+      <file alias="widget" compressed="true">templates/widget.tar.gz</file>
+      <file alias="blank" compressed="true">templates/blank.tar.gz</file>
+      <file alias="terminal" compressed="true">templates/terminal.tar.gz</file>
     </gresource>
 </gresources>

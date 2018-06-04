@@ -142,13 +142,16 @@ namespace App.Tests {
 
             Test.add_data_func ("/app/form/libraries_list", () => {
                 var view = new App.Views.AppView ();
-                Assert.string_compare ("libgranite-dev, libgtk-3-dev", view.libraries_list ());
+                Assert.string_compare ("granite, gtk+-3.0", view.libraries_list ());
+                Assert.string_compare ("libgranite-dev, libgtk-3-dev", view.packages_list ());
 
-                view.toggle_library ("libunity-dev", true);
-                Assert.string_compare ("libgranite-dev, libgtk-3-dev, libunity-dev", view.libraries_list ());
+                view.toggle_library ("unity", true);
+                Assert.string_compare ("granite, gtk+-3.0, unity", view.libraries_list ());
+                Assert.string_compare ("libgranite-dev, libgtk-3-dev, libunity-dev", view.packages_list ());
 
-                view.toggle_library ("libgranite-dev", false);
-                Assert.string_compare ("libgtk-3-dev, libunity-dev", view.libraries_list ());
+                view.toggle_library ("granite", false);
+                Assert.string_compare ("gtk+-3.0, unity", view.libraries_list ());
+                Assert.string_compare ("libgtk-3-dev, libunity-dev", view.packages_list ());
             });
 
             Test.add_data_func ("/template/setup", () => {

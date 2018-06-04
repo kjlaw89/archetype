@@ -41,13 +41,13 @@ namespace App.Configs {
         public abstract const string [] ABOUT_AUTHORS = { "KJ Lawrence <kjtehprogrammer@gmail.com>" };
         public abstract const Gtk.License ABOUT_LICENSE_TYPE = Gtk.License.GPL_3_0;
         public abstract const App.Widgets.Library [] LIBRARIES = {
-            { "libgranite-dev",         "Granite",          "elementary extended GTK+",             true },
-            { "libgtk-3-dev",           "GTK+",             "Gnome UI Toolkit",                     true },
-            { "libsqlite-3-dev",        "SQLite",           "Local database storage",               false },
-            { "libunity-dev",           "Unity",            "Ubuntu Unity integration library",     false },
-            { "libappindicator3-dev",   "App Indictator",   "Desktop indicator icons",              false },
-            { "libsoup2.4-dev",         "Soup",             "HTTP(s) Requests",                     false },
-            { "libjson-glib-dev",       "JSON",             "JSON Encoding/Decoding",               false },
+            { "granite",             "libgranite-dev",         "Granite",          "elementary extended GTK+",             true },
+            { "gtk+-3.0",            "libgtk-3-dev",           "GTK+",             "Gnome UI Toolkit",                     true },
+            { "sqlite3",             "libsqlite-3-dev",        "SQLite",           "Local database storage",               false },
+            { "unity",               "libunity-dev",           "Unity",            "Ubuntu Unity integration library",     false },
+            { "appindicator3-0.1",   "libappindicator3-dev",   "App Indictator",   "Desktop indicator icons",              false },
+            { "libsoup-2.4",         "libsoup2.4-dev",         "Soup",             "HTTP(s) Requests",                     false },
+            { "json-glib-1.0",       "libjson-glib-dev",       "JSON",             "JSON Encoding/Decoding",               false },
         };
     }
 }
