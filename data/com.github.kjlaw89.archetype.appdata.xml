@@ -5,7 +5,7 @@
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>GPL-3.0+</project_license>
     <name>Archetype</name>
-    <summary>Create new Vala apps with ease</summary>
+    <summary>Start developing apps with just a few clicks!</summary>
     <developer_name>KJ Lawrence</developer_name>
     <provides>
         <binary>com.github.kjlaw89.archetype</binary>
@@ -16,7 +16,21 @@
         </screenshot>
     </screenshots>
     <description>
-        <p>A simple Vala app generator</p>
+        <p>
+        	Archetype is a vala app generator. It comes with 5 pre-configured templates
+        	and basic configuration options to get you building apps in minutes!
+        </p>
+        
+        <ul>
+        	<li>5 default app types: Granite, Utility, Widget, Blank, Terminal</li>
+        	<li>Collected information is pre-populated in app</li>
+        	<li>Easily add external libraries</li>
+        	<li>Unit/UI testing pre-configured</li>
+        	<li>Generated apps pre-configured for Gnome Builder and pass elementary automated testing</li>
+        	<li>Easily configurable branding</li>
+        	<li>Ability to automatically initialize GIT repo</li>
+        	<li>"./app" script to simplify installing dependencies and development</li>
+        </ul>
     </description>
     <releases>
       <release version="1.0.0" date="2018-06-04">

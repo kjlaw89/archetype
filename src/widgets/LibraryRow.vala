@@ -78,7 +78,7 @@ namespace App.Widgets {
             grid.attach (selected_check, 0, 0, 1, 2);
             grid.attach (name_label, 1, 0);
             grid.attach (library_label, 2, 0);
-            grid.attach (description_label, 1, 1);
+            grid.attach (description_label, 1, 1, 2, 1);
 
             this.add (grid);
         }

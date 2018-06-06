@@ -781,8 +781,8 @@ namespace App.Views {
             libraries_viewport.add (libraries_listbox);
 
             var libraries_scrolled = new Gtk.ScrolledWindow (null, null);
-            libraries_scrolled.width_request = 400;
-            libraries_scrolled.height_request = 250;
+            libraries_scrolled.width_request = 500;
+            libraries_scrolled.height_request = 300;
             libraries_scrolled.add (libraries_viewport);
 
             libraries_popover = new Gtk.Popover (libraries_label);
