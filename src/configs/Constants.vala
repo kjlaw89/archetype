@@ -41,13 +41,39 @@ namespace App.Configs {
         public abstract const string [] ABOUT_AUTHORS = { "KJ Lawrence <kjtehprogrammer@gmail.com>" };
         public abstract const Gtk.License ABOUT_LICENSE_TYPE = Gtk.License.GPL_3_0;
         public abstract const App.Widgets.Library [] LIBRARIES = {
+            { "appindicator3-0.1",   "libappindicator3-dev",   "App Indictator",   "Desktop indicator icons",              false },
+            { "libarchive",          "libarchive-dev",         "Archive",          "Library to create/read archive formats", false },
+            { "cairo",               "libcairo2-dev",          "Cairo",            "2D Graphics library",                  false },
+            { "libevent",            "libevent-dev",           "Event",            "Asynchronous event notifications library", false },
             { "granite",             "libgranite-dev",         "Granite",          "elementary extended GTK+",             true },
             { "gtk+-3.0",            "libgtk-3-dev",           "GTK+",             "Gnome UI Toolkit",                     true },
-            { "sqlite3",             "libsqlite-3-dev",        "SQLite",           "Local database storage",               false },
-            { "unity",               "libunity-dev",           "Unity",            "Ubuntu Unity integration library",     false },
-            { "appindicator3-0.1",   "libappindicator3-dev",   "App Indictator",   "Desktop indicator icons",              false },
-            { "libsoup-2.4",         "libsoup2.4-dev",         "Soup",             "HTTP(s) Requests",                     false },
+            { "javascriptcoregtk-3.0", "libjavascriptcoregtk-3.0-dev", "Javascript Core", "Introspection data for GTK+ JS apps (required for Webkit)", false },
             { "json-glib-1.0",       "libjson-glib-dev",       "JSON",             "JSON Encoding/Decoding",               false },
+            { "libmarkdown",         "libmarkdown2-dev",       "Markdown",         "Markdown to HTML convertor",           false },
+            { "mysql",               "libmysqlclient-dev",     "MySQL",            "Client api for communicating with MySQL", false },
+            { "libpeas-1.0",         "libpeas-dev",            "Libpeas",          "Plugins engine",                       false },
+            { "libpq",               "libpq-dev",              "PostgreSQL",       "Client api for communicating with PostgreSQL", false },
+            { "libpulse",            "libpulse-dev",           "Pulse",            "Client library for PulseAudio",        false },
+            { "purple",              "libpurple-dev",          "Purple",           "IM library from Pidgin",               false },
+            { "librabbitmq",         "librabbitmq-dev",        "RabbitMQ",         "AMQP Client for AMQP Servers",         false },
+            { "libserialport",       "libserialport-dev",      "Serial Port",      "Library to interact with serial ports", false },
+            { "sdl2",                "libsdl2-dev",            "SDL2",             "Cross-platform media and graphis library", false },
+            { "sdl2-gfx",            "libsdl2-dev",            "SDL2 Gfx",         "SDL2 Extension for basic graphic functions", false },
+            { "sdl2-image",          "libsdl2-dev",            "SDL2 Image",       "SDL2 Extension for basic image loading", false },
+            { "sdl2-net",            "libsdl2-dev",            "SDL2 Net",         "SDL2 Extension for basic networking",  false },
+            { "sdl2-ttf",            "libsdl2-dev",            "SDL2 TTF",         "SDL2 Extension for using TrueType fonts", false },
+            { "sdl2-mixer",          "libsdl2-dev",            "SDL2 Mixer",       "SDL2 Extension for multi-channel audio", false },
+            { "libsoup-2.4",         "libsoup2.4-dev",         "Soup",             "HTTP(s) Requests",                     false },
+            { "sqlite3",             "libsqlite-3-dev",        "SQLite",           "Local database storage",               false },
+            { "switchboard-2.0",     "libswitchboard-2.0-dev", "Switchboard",      "Library for writing plugins for elementary Switchboard", false },
+            { "telepathy-glib",      "libtelepathy-glib-dev",  "Telepathy",        "D-Bus framwork for unifying real time communication", false },
+            { "unity",               "libunity-dev",           "Unity",            "Ubuntu Unity integration library",     false },
+            { "libusb",              "libusb-dev",             "USB",              "Library to interact with USB ports",   false },
+            { "vte-2.91",            "libvte-2.91-dev",        "VTE",              "Terminal emulator widget for GTK",     false },
+            { "webkit2gtk-4.0",      "libwebkit2gtk-4.0-dev",  "Webkit",           "Web content rendering with Webkit (requires JavaScript Core)", false },
+            { "libxml-2.0",          "libxml2-dev",            "XML",              "XML Encoding/Decoding",                false },
+            { "zeitgeist-2.0",       "libzeitgeist-2.0-dev",   "Zeitgeist",        "Logging and events service",           false },
+            
         };
     }
 }

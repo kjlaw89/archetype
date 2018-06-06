@@ -378,16 +378,16 @@ namespace App.Views {
                     case "granite":
                     case "utility":
                     case "widget":
-                        toggle_library ("libgranite-dev", true);
-                        toggle_library ("libgtk-3-dev", true);
+                        toggle_library ("granite", true);
+                        toggle_library ("gtk+-3.0", true);
                         break;
                     case "blank":
-                        toggle_library ("libgranite-dev", false);
-                        toggle_library ("libgtk-3-dev", true);
+                        toggle_library ("granite", false);
+                        toggle_library ("gtk+-3.0", true);
                         break;
                     case "terminal":
-                        toggle_library ("libgranite-dev", false);
-                        toggle_library ("libgtk-3-dev", false);
+                        toggle_library ("granite", false);
+                        toggle_library ("gtk+-3.0", false);
                         break;
                 }
             });

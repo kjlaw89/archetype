@@ -184,6 +184,7 @@ namespace App.Models {
              * {{ repo-url }} - still need to get
              * {{ website-url }} - still need to get 
              * {{ exe-name }} - replace with executable
+             * {{ path }} - replace with path application will be stored in
              * {{ libraries-control }} - replace with packages (formatted for debian control file)
              * {{ libraries-readme }} - replace with packages formatted for README.md
              * {{ libraries-meson }} - replace with libraries formatted for meson
@@ -242,6 +243,7 @@ namespace App.Models {
             replace_in_files (export_path, "{{ headerbar-title }}", (template != "widget") ? title : "");
             replace_in_files (export_path, "{{ punchline }}", punchline);
             replace_in_files (export_path, "{{ description }}", description);
+            replace_in_files (export_path, "{{ path }}", "file://" + directory);
             replace_in_files (export_path, "{{ author }}", author);
             replace_in_files (export_path, "{{ author-email }}", author_email);
             replace_in_files (export_path, "{{ rdnn-path }}", rdnn_path);
@@ -250,7 +252,7 @@ namespace App.Models {
             replace_in_files (export_path, "{{ libraries-meson }}", format_libraries_meson (libraries));
             replace_in_files (export_path, "{{ categories }}", "");
             replace_in_files (export_path, "{{ keywords }}", "");
-            replace_in_files (export_path, "{{ terminal_mode }}", (template == "terminal" ? "true" : "false"));
+            replace_in_files (export_path, "{{ terminal-mode }}", (template == "terminal" ? "true" : "false"));
             replace_in_files (export_path, "{{ license-code }}", format_license_type (license));
             replace_in_files (export_path, "{{ license-type }}", license.up ());
             replace_in_files (export_path, "{{ repo-url }}", (repo_url == "") ? null : repo_url);
