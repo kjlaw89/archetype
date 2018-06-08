@@ -17,8 +17,7 @@
     </screenshots>
     <description>
         <p>
-        	Archetype is a vala app generator. It comes with 5 pre-configured templates
-        	and basic configuration options to get you building apps in minutes!
+        	Archetype is a vala app generator that comes with 5 customizable templates to get you building apps in minutes!
         </p>
         
         <ul>
@@ -33,6 +32,11 @@
         </ul>
     </description>
     <releases>
+      <release version="1.0.1" date="2018-06-04">
+        <description>
+          <p>Updated description and colors</p>
+        </description>
+      </release>
       <release version="1.0.0" date="2018-06-04">
         <description>
           <p>Initial 1.0.0 release!</p>
@@ -73,8 +77,8 @@
     <url type="help">https://github.com/kjlaw89/archetype/issues</url>
     <update_contact>kjtehprogrammer@gmail.com</update_contact>
     <custom>
-        <value key="x-appcenter-color-primary">#546A79</value>
-        <value key="x-appcenter-color-primary-text">#ECF0F1</value>
+        <value key="x-appcenter-color-primary">#D4D4D4</value>
+        <value key="x-appcenter-color-primary-text">#7A36B1</value>
         <value key="x-appcenter-suggested-price">2.5</value>
     </custom>
 </component>
