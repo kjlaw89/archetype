@@ -25,6 +25,7 @@ namespace App.Models {
     public class Template {
 
         private App.Views.AppView view;
+        public string error { get; private set; default = ""; }
 
         public string author { get; set; }
         public string author_email { get; set; }
@@ -104,7 +105,8 @@ namespace App.Models {
                 return true;
             }
             catch (Error e) {
-                warning ("Unable to delete temporary files " + export_path +", "+ tar_path);
+                error = "Unable to delete temporary files " + export_path +", "+ tar_path;
+                warning (error);
             }
 
             return false;
@@ -123,12 +125,14 @@ namespace App.Models {
             // Attempt to load the template resource
             try {
                 if (!template_file.load_contents (null, out data, null)) {
-                    warning ("Unable to load template resource");
+                    error = "Unable to load template resource";
+                    warning (error);
                     return false;
                 }
             }
             catch (Error e) {
-                warning ("Unable to load resource " + e.message);
+                error = "Unable to load resource " + e.message;
+                warning (error);
                 return false;
             }
 
@@ -140,7 +144,8 @@ namespace App.Models {
                 output.write_all (data, null);
             }
             catch (Error e) {
-                warning ("Unable to create archive in /tmp " + e.message);
+                error = "Unable to create archive in /tmp " + e.message;
+                warning (error);
                 return false;
             }
 
@@ -150,7 +155,8 @@ namespace App.Models {
                 Process.spawn_command_line_sync ("tar -xzf "+ tar_path +" -C "+ export_path);
             }
             catch (Error e) {
-                warning ("Unable to unzip archive in /tmp " + e.message);
+                error = "Unable to unzip archive in /tmp " + e.message;
+                warning (error);
                 return false;
             }
 
@@ -223,12 +229,14 @@ namespace App.Models {
 
             try {
                 if (!license_preamble_file.load_contents (null, out license_preamble_data, null)) {
-                    warning ("Unable to load license preamble resource");
+                    error = "Unable to load license preamble resource";
+                    warning (error);
                     return false;
                 }
             }
             catch (Error e) {
-                warning ("Unable to get license preamble " + e.message);
+                error = "Unable to get license preamble " + e.message;
+                warning (error);
                 return false;
             }
 
@@ -272,23 +280,16 @@ namespace App.Models {
                 initialize_git (export_path);
             }
 
-            // Move directory
-            var source_dir = File.new_for_path (export_path);
-            var dest_dir = File.new_for_path (directory);
+            // Move directory 
+            string stdout; 
+            string stderr; 
+            Process.spawn_command_line_sync ("mv \""+ export_path +"\" \""+ directory + "\"", out stdout, out stderr);
 
-            try {
-                if (!source_dir.move (dest_dir, FileCopyFlags.NONE)) {
-                    warning ("Unable to move temp directory to " + directory);
-                    clean (rdnn);
-                    return false;
-                }
-            }
-            catch (Error e) {
-                warning ("Unable to move temp directory to "+ directory +" - "+ e.message);
-                clean (rdnn);
+            if (stderr.length > 0) {
+                error = "Unable to move temp directory to "+ directory +" - "+ stderr;
+                warning (error);
                 return false;
             }
-            
 
             // Clean up after the build process (only the .tar.gz should be left)
             clean (rdnn);

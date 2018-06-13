@@ -1,3 +1,9 @@
+com.github.kjlaw89.archetype (1.0.2) xenial; urgency=low
+
+  * Update to fix moving temp directory and basic error logging
+
+ -- KJ Lawrence <kjtehprogrammer@gmail.com>  Tue, 12 Jun 2018 23:45:00 -0500
+
 com.github.kjlaw89.archetype (1.0.0) xenial; urgency=low
 
   * Initial Release

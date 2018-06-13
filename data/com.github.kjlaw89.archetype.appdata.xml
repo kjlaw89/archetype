@@ -32,6 +32,11 @@
         </ul>
     </description>
     <releases>
+      <release version="1.0.2" date="2018-06-12">
+        <description>
+          <p>Changed method for moving temp directory and added in basic error logging</p>
+        </description>
+      </release>
       <release version="1.0.1" date="2018-06-04">
         <description>
           <p>Updated description and colors</p>

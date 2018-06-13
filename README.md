@@ -17,7 +17,7 @@
     <img src="https://img.shields.io/badge/License-GPL--3.0-blue.svg">
   </a>
   <a href="https://github.com/kjlaw89/archetype/releases">
-    <img src="https://img.shields.io/badge/Release-v%201.0.0-orange.svg">
+    <img src="https://img.shields.io/badge/Release-v%201.0.2-orange.svg">
   </a>
 </p>
 
