@@ -55,6 +55,7 @@ namespace App.Views {
         public Gtk.FileChooserButton directory_button           { get; private set; }
         public Gtk.Label           directory_executable_label   { get; private set; }
         public Gtk.Entry           domain_entry                 { get; private set; }
+        public Gtk.Label           error_label                  { get; private set; }
         public Gtk.Entry           exec_entry                   { get; private set; }
         public Gtk.Label           executable_label             { get; private set; }
         public Gtk.Button          generate_button              { get; private set; }
@@ -134,6 +135,9 @@ namespace App.Views {
                 back ();
             });
 
+            error_label = new Gtk.Label (null);
+            error_label.get_style_context ().add_class ("error");
+
             var action_buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12);
             action_buttons_box.halign = Gtk.Align.END;
             action_buttons_box.add (back_button);
@@ -143,11 +147,11 @@ namespace App.Views {
             var buttons_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
             buttons_box.hexpand = true;
             buttons_box.margin_top = 24;
+            buttons_box.add (error_label);
             buttons_box.add (action_buttons_box);
 
             this.add (stack_view);
             this.add (buttons_box);
-
             
             stage = "project";
             toggle_buttons ();

@@ -75,7 +75,19 @@ namespace App.Controllers {
                 var directory = File.new_for_path (template.directory);
                 Granite.Services.System.open (directory);
                 quit ();
+                return;
             }
+
+            this.app_view.error_label.label = "Unable to create project";
+            var dialog = new Granite.MessageDialog.with_image_from_icon_name (
+                "Unable to create project",
+                template.error,
+                "dialog-error",
+                Gtk.ButtonsType.CLOSE
+            );
+
+            dialog.run ();
+            dialog.destroy ();
         }
     }
 }
