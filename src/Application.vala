@@ -24,12 +24,12 @@ using App.Controllers;
 namespace App {
 
     /**
-     * The {@code Application} class is a foundation for all granite-based applications.
+     * The {@code Application} class is a foundation for all gtk-based applications.
      *
      * @see Granite.Application
      * @since 1.0.0
      */
-    public class Application : Granite.Application {
+    public class Application : Gtk.Application {
 
         public AppController controller;
 
