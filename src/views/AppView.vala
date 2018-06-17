@@ -36,6 +36,7 @@ namespace App.Views {
         private Gtk.Label           domain_label;
         private Gtk.Label           exec_label;
         private Gtk.Label           git_label;
+        private Gtk.Label           namespace_label;
         private Gtk.Label           license_label;
         private Gtk.Label           libraries_label;
         private Gtk.Label           punchline_label;
@@ -60,6 +61,7 @@ namespace App.Views {
         public Gtk.Label           executable_label             { get; private set; }
         public Gtk.Button          generate_button              { get; private set; }
         public Gtk.Switch          git_switch                   { get; private set; }
+        public Gtk.Entry           namespace_entry              { get; private set; }
         public Gtk.Button          next_button                  { get; private set; }
         public Gtk.ComboBoxText    license_combo                { get; private set; }
         public Gtk.Button          license_lookup_button        { get; private set; }
@@ -240,7 +242,7 @@ namespace App.Views {
             
             switch (stage) {
                 case "project":
-                    if (template_combo.active_id == null || license_combo.active_id == null || title_entry.text == "") {
+                    if (template_combo.active_id == null || license_combo.active_id == null || title_entry.text == "" || namespace_entry.text == "") {
                         valid = false;
                     }
 
@@ -447,7 +449,7 @@ namespace App.Views {
             title_label.mnemonic_widget = title_entry;
 
             grid.attach (title_label, 0, 3, 1, 1);
-            grid.attach (title_entry, 1, 3, 1, 1);
+            grid.attach (title_entry, 1, 3, 3, 1);
 
             // Executable Name Entry
             exec_entry = new Gtk.Entry ();
@@ -469,8 +471,38 @@ namespace App.Views {
             exec_label.halign = Gtk.Align.END;
             exec_label.mnemonic_widget = exec_entry;
 
-            grid.attach (exec_label, 2, 3, 1, 1);
-            grid.attach (exec_entry, 3, 3, 1, 1);
+            grid.attach (exec_label, 0, 4, 1, 1);
+            grid.attach (exec_entry, 1, 4, 1, 1);
+
+            // Namespace Entry
+            namespace_entry = new Gtk.Entry ();
+            namespace_entry.hexpand = true;
+            namespace_entry.text = "App";
+            namespace_entry.secondary_icon_name = "dialog-information-symbolic";
+            namespace_entry.secondary_icon_tooltip_text = _("Namespaces are alpha only [a-zA-Z]");
+            namespace_entry.key_release_event.connect ((key) => {
+                validate_next ();
+
+                var text = namespace_entry.text;
+                var regex = new Regex ("[^a-zA-Z]+");
+                namespace_entry.text = regex.replace (text, text.length, 0, "");
+
+                return false;
+            });
+            namespace_entry.changed.connect (() => {
+                validate_next ();
+                
+                var text = namespace_entry.text;
+                var regex = new Regex ("[^a-zA-Z]+");
+                namespace_entry.text = regex.replace (text, text.length, 0, "");
+            });
+
+            namespace_label = new Gtk.Label.with_mnemonic (_("Name_space") + ":");
+            namespace_label.halign = Gtk.Align.END;
+            namespace_label.mnemonic_widget = namespace_entry;
+
+            grid.attach (namespace_label, 2, 4, 1, 1);
+            grid.attach (namespace_entry, 3, 4, 1, 1);
 
             // Domain Entry
             domain_entry = new Gtk.Entry ();
@@ -498,9 +530,9 @@ namespace App.Views {
             domain_label.margin_top = 4;
             domain_label.mnemonic_widget = domain_entry;
 
-            grid.attach (domain_label, 0, 4, 1, 1);
-            grid.attach (domain_entry, 1, 4, 1, 1);
-            grid.attach (executable_label, 2, 4, 2, 1);
+            grid.attach (domain_label, 0, 5, 1, 1);
+            grid.attach (domain_entry, 1, 5, 1, 1);
+            grid.attach (executable_label, 2, 5, 2, 1);
 
             this.stack_view.add_named (grid, "project");
         }

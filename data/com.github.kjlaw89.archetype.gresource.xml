@@ -26,6 +26,8 @@
       <file alias="lgpl-3.0-preamble" compressed="true">licenses/lgpl-3.0-preamble.txt</file>
       <file alias="mit" compressed="true">licenses/mit.txt</file>
       <file alias="mit-preamble" compressed="true">licenses/mit-preamble.txt</file>
+      <file alias="mpl-2.0" compressed="true">licenses/mpl-2.0.txt</file>
+      <file alias="mpl-2.0-preamble" compressed="true">licenses/mpl-2.0-preamble.txt</file>
       <file alias="unlicense" compressed="true">licenses/unlicense.txt</file>
       <file alias="unlicense-preamble" compressed="true">licenses/unlicense-preamble.txt</file>
       <file alias="custom" compressed="true">licenses/custom.txt</file>
