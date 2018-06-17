@@ -34,7 +34,8 @@ namespace App.Models {
         public string directory { get; set; }
         public string domain { get; set; }
         public string executable { get; set; }
-        public bool   git { get; set; default = false;}
+        public bool   git { get; set; default = false; }
+        public string namespace { get; set; }
         public string libraries { get; set; }
         public string license { get; set; }
         public string packages { get; set; }
@@ -67,6 +68,7 @@ namespace App.Models {
             this.domain = view.domain_entry.text;
             this.executable = view.exec_entry.text;
             this.git = view.git_switch.active;
+            this.namespace = view.namespace_entry.text;
             this.libraries = view.libraries_list ();
             this.license = view.license_combo.active_id;
             this.packages = view.packages_list ();
@@ -187,8 +189,9 @@ namespace App.Models {
              * {{ author }} - replace with author
              * {{ author-email }} - replace with author_email
              * {{ rdnn-path }} - replace with rdnn_path
-             * {{ repo-url }} - still need to get
-             * {{ website-url }} - still need to get 
+             * {{ repo-url }} - replace with repo_url
+             * {{ website-url }} - replace with website_url
+             * AppNamespace - replace with namespace
              * {{ exe-name }} - replace with executable
              * {{ path }} - replace with path application will be stored in
              * {{ libraries-control }} - replace with packages (formatted for debian control file)
@@ -258,6 +261,7 @@ namespace App.Models {
             replace_in_files (export_path, "{{ libraries-control }}", format_libraries_control (packages));
             replace_in_files (export_path, "{{ libraries-readme }}", format_libraries_readme (packages));
             replace_in_files (export_path, "{{ libraries-meson }}", format_libraries_meson (libraries));
+            replace_in_files (export_path, "AppNamespace", namespace);
             replace_in_files (export_path, "{{ categories }}", "");
             replace_in_files (export_path, "{{ keywords }}", "");
             replace_in_files (export_path, "{{ terminal-mode }}", (template == "terminal" ? "true" : "false"));
@@ -451,6 +455,9 @@ namespace App.Models {
             var libs = libraries.split (",");
             foreach (var l in libs) {
                 var library = l.strip ();
+                if (library == "") {
+                    continue;
+                }
 
                 if (i == 0) {
                     output = "dependency('"+ library +"'),\n";
